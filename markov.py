@@ -1,6 +1,8 @@
 # !/usr/bin/env python
 
 from sys import argv
+import random
+
 
 def unpack_file(input_file):
     file_object = open(input_file)
@@ -37,20 +39,23 @@ def make_chains(word_bank_list):
     return markov_chain_dict
 
 
-    
+def make_text(markov_dict_final):
+    """Takes a dictionary of markov chains and returns random text
+    based off an original text."""
 
+    for element in markov_dict_final:
 
-#     return {}
-
-# def make_text(chains):
-#     """Takes a dictionary of markov chains and returns random text
-#     based off an original text."""
-#     return "Here's some random text."
+        random_key = random.choice(markov_dict_final.keys())
+        tuple1 = random_key[1]
+        tuple2 = random.choice(markov_dict_final[random_key])
+        
+    return "%s %s" % (tuple1,tuple2)
 
 def main(input_file):
     word_bank_list = unpack_file(input_file)
-    place_holder = make_chains(word_bank_list)
-    print place_holder
+    markov_dict_final = make_chains(word_bank_list)
+    returned_text = make_text(markov_dict_final)
+    print returned_text
 #     # args = sys.argv
 
 #     # Change this to read input_text from a file
