@@ -1,7 +1,10 @@
 # !/usr/bin/env python
 
+
 from sys import argv
 import random
+
+ENDING_PUNCTUATION = ["?", ".", "!"]
 
 
 def unpack_file(input_file):
@@ -9,8 +12,7 @@ def unpack_file(input_file):
 
     word_bank_list = []
     for line in file_object:
-        line = line.rstrip()
-        line = line.split()
+        line = line.rstrip().translate(None, "()").split()
         word_bank_list += line
     return word_bank_list
 
@@ -23,7 +25,7 @@ def make_chains(word_bank_list):
     markov_dict_final = {}
 
     for i in range(len(word_bank_list)-2):
-        key = tuple([word_bank_list[i],word_bank_list[i+1]])
+        key = (word_bank_list[i], word_bank_list[i+1])
 
         if key not in markov_dict_final:
             markov_dict_final[key] = [word_bank_list[i+2]]
@@ -38,10 +40,10 @@ def make_text(markov_dict_final):
     based off an original text."""
 
     random_key = random.choice(markov_dict_final.keys())
-    tuple_at_0 = random_key[1]
+    tuple_at_0 = random_key[1].translate(None, ".")
     tuple_at_1 = random.choice(markov_dict_final[random_key])
-    punctuation = ["?", ".", "!"]
-    markov_text = [tuple_at_0,tuple_at_1] #these could have punctuation. check for them. how should we control for capitalization?
+    tuple_at_1 = tuple_at_1.translate(None, ".")
+    markov_text = [tuple_at_0, tuple_at_1] #these could have punctuation. check for them. how should we control for capitalization?
 
     while True:
         search_tuple = (markov_text[-2],markov_text[-1])
@@ -49,11 +51,13 @@ def make_text(markov_dict_final):
             next_word_options = markov_dict_final[search_tuple]
             next_word = random.choice(next_word_options)
             markov_text.append(next_word)
-            if next_word[-1] in punctuation:
+            if next_word[-1] in ENDING_PUNCTUATION:
                 break
         else:
             break
-    
+
+    markov_text[0] = markov_text[0].title()
+    markov_text[1] = markov_text[1].lower()
     markov_output = " ".join(markov_text)
     return markov_output
     
