@@ -47,6 +47,7 @@ def make_text(markov_dict_final):
     tuple_at_0 = random_key[1].translate(None, ".")
     tuple_at_1 = random.choice(markov_dict_final[random_key]).translate(None, ".")
     markov_text = [tuple_at_0, tuple_at_1]
+    character_length = (len(tuple_at_0) + len(tuple_at_1))
     
     while True:
         search_tuple = (markov_text[-2],markov_text[-1])
@@ -54,14 +55,15 @@ def make_text(markov_dict_final):
             next_word_options = markov_dict_final[search_tuple]
             next_word = random.choice(next_word_options)
             markov_text.append(next_word)
-            if next_word[-1] in ENDING_PUNCTUATION:
+            character_length += (len(next_word) + 1)
+            if next_word[-1] in ENDING_PUNCTUATION or character_length >= 130:
                 break
         else:
             break
 
     markov_text[0] = markov_text[0].title()
     markov_text[1] = markov_text[1].lower()
-    markov_output = " ".join(markov_text)
+    markov_output = " ".join(markov_text).lower()
     return markov_output
     
 
@@ -69,7 +71,7 @@ def main(input_file_1, input_file_2):
     word_bank_list = unpack_file(input_file_1, input_file_2)
     markov_dict_final = make_chains(word_bank_list)
     returned_text = make_text(markov_dict_final)
-    print returned_text
+    return returned_text
  
 
 if __name__ == "__main__":
