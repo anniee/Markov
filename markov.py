@@ -7,11 +7,15 @@ import random
 ENDING_PUNCTUATION = ["?", ".", "!"]
 
 
-def unpack_file(input_file):
-    file_object = open(input_file)
+def unpack_file(input_file_1, input_file_2):
+    file_object_1 = open(input_file_1)
+    file_object_2 = open(input_file_2)
 
     word_bank_list = []
-    for line in file_object:
+    for line in file_object_1:
+        line = line.rstrip().translate(None, "()").split()
+        word_bank_list += line
+    for line in file_object_2:
         line = line.rstrip().translate(None, "()").split()
         word_bank_list += line
     return word_bank_list
@@ -41,10 +45,9 @@ def make_text(markov_dict_final):
 
     random_key = random.choice(markov_dict_final.keys())
     tuple_at_0 = random_key[1].translate(None, ".")
-    tuple_at_1 = random.choice(markov_dict_final[random_key])
-    tuple_at_1 = tuple_at_1.translate(None, ".")
-    markov_text = [tuple_at_0, tuple_at_1] #these could have punctuation. check for them. how should we control for capitalization?
-
+    tuple_at_1 = random.choice(markov_dict_final[random_key]).translate(None, ".")
+    markov_text = [tuple_at_0, tuple_at_1]
+    
     while True:
         search_tuple = (markov_text[-2],markov_text[-1])
         if search_tuple in markov_dict_final:
@@ -62,13 +65,14 @@ def make_text(markov_dict_final):
     return markov_output
     
 
-def main(input_file):
-    word_bank_list = unpack_file(input_file)
+def main(input_file_1, input_file_2):
+    word_bank_list = unpack_file(input_file_1, input_file_2)
     markov_dict_final = make_chains(word_bank_list)
     returned_text = make_text(markov_dict_final)
     print returned_text
  
 
 if __name__ == "__main__":
-    input_file = argv[1]
-    main(input_file)
+    input_file_1 = argv[1]
+    input_file_2 = argv[2]
+    main(input_file_1, input_file_2)
